@@ -1,0 +1,445 @@
+@echo off
+color 3f
+
+rem #include
+rem /*
+rem * Your warranty is now void.
+rem *
+rem * I am not responsible for bricked devices, dead SD cards,
+rem * thermonuclear war, or you getting fired because the alarm app failed. Please
+rem * do some research if you have any concerns about features included in this program
+rem * before use it! YOU are choosing to make these modifications, and if
+rem * you point the finger at me for messing up your device, I will laugh at you.
+rem * Copyright 2013, Mako's Studio
+rem * 2013, Mako's Studio, All Rights Reserved
+rem * Mako's Studio LLC and Mako's Studio are trademarks of Danilo Quintanilha
+rem * Agradecimentos especiais: 
+rem *  -->PulseDroid [http://forum.xda-developers.com/member.php?u=4425071]
+rem *  -->DooMLoRD   [http://forum.xda-developers.com/member.php?u=2784807]
+rem * Tópico de desenvolvimento:
+rem *  -->[http://forum.xda-developers.com/showthread.php?t=2209141]
+rem */
+
+title The Ace All-In-One Tool - Danilo Studios - v1.0 BETA
+
+IF EXIST "C:\DaniloStudios/COMPRESS/INPUT" (echo Diretorio existente) ELSE (mkdir "C:\DaniloStudios/COMPRESS/INPUT")
+IF EXIST "C:\DaniloStudios/EXTRACT/OUT" (echo Diretorio existente) ELSE (mkdir "C:\DaniloStudios/EXTRACT/OUT")
+IF EXIST "C:\DaniloStudios/EXTRACT/INPUT" (echo Diretorio existente) ELSE (mkdir "C:\DaniloStudios/EXTRACT/INPUT")
+cls
+goto menu
+
+:menu
+cls
+echo.
+echo   Por favor, escolha a acao que voce deseja realizar.
+echo.
+echo   1. Descompactar/Extrair arquivo .zip.
+echo   2. Compactar/Zipar arquivos e pastas.
+echo   3. Assinar o seu arquivo .zip.
+echo   4. Rootear o celular.
+echo   5. Remover o Root do seu celular.
+echo   6. Opcoes ADB.
+echo   7. ApkTool.
+echo   8. Sobre.
+echo   9. Exibir a Licenca do usario.
+echo   x. Sair.
+echo.
+set /p se=Selecione a acao: 
+if %se%==1 (goto unzip)
+if %se%==2 (goto zip)
+if %se%==3 (goto sign)
+if %se%==4 (goto root)
+if %se%==5 (goto unroot)
+if %se%==6 (goto adb)
+if %se%==7 (goto apktool)
+if %se%==8 (goto about)
+if %se%==9 (goto eulaopen)
+if %se%==x (goto exit)
+
+:unzip
+cls
+echo.
+echo Por favor, coloque o arquivo .zip, ou seja, o .zip que voce deseja extrair no   diretorio C:\DaniloStudios/EXTRACT/INPUT.
+echo.
+pause
+echo Extraindo...
+echo.
+if exist "C:\DaniloStudios\EXTRACT\INPUT\*.zip" (call C:\DaniloStudios\tools\7za.exe x "C:\DaniloStudios\EXTRACT\INPUT\*" -o"C:\DaniloStudios\EXTRACT\OUT")
+echo Tudo pronto! Voce pode encontrar os arquivos extraidos em                       C:\DaniloStudios/EXTRACT/OUT.
+echo.
+pause
+goto menu
+
+:zip
+cls
+echo.
+echo Por favor, coloque os arquivos e pastas que voce deseja compactar em            C:\DaniloStudios/COMPRESS/INPUT.
+echo.
+pause
+echo Comprimindo...
+echo.
+start C:\DaniloStudios\tools\7za a -mx9 -tzip "C:\DaniloStudios\COMPRESS\OUT\update.zip" "C:\DaniloStudios\COMPRESS\INPUT\*"
+echo Tudo pronto! Voce pode encontrar o arquivo .zip em                              C:\DaniloStudios/COMPRESS/OUT.
+echo.
+pause
+goto menu
+
+:sign
+cls
+echo.
+echo Por favor, lembre-se, voce precisa compactar os arquivos antes de assinar!
+echo.
+pause
+echo ASSINANDO...
+echo.
+@ECHO OFF
+
+SET CLASSPATH=.\COMPRESS\OUT\testsign.jar;%CLASSPATH%
+
+ECHO.
+ECHO Arquivo "update.zip" assinado ...
+ECHO.
+
+java testsign "C:\DaniloStudios\COMPRESS\OUT\update.zip" "C:\DaniloStudios\COMPRESS\OUT\update-signed.zip"
+
+ECHO.
+ECHO Arquivo assinado com sucesso SE nenhum erro acima.
+ECHO.
+
+pause
+
+echo Tudo pronto! Voce pode encontrar o .zip assinado em                               C:\DaniloStudios/COMPRESS/OUT.
+echo.
+pause
+goto menu
+
+:root
+cls
+echo Versao BETA, erros sao esperados.
+echo Não traduzido por pedido do desenvolvedor original.
+echo Lista dos dispositivos suportados pode ser encontrado em 
+echo C:/DaniloStudios/Aparelhos.txt
+pause
+cls
+@echo ----------------------------------------------------------------------------
+@echo	              Easy rooting toolkit (v4.0)
+@echo                    created by DooMLoRD
+@echo         using exploit zergRush (Revolutionary Team)
+@echo    Credits go to all those involved in making this possible!
+@echo ----------------------------------------------------------------------------
+@echo  [*] Este script ira:
+@echo      (1) Rootear o seu celular usando zergRush exploit (21 Nov)
+@echo      (2) Instalar Busybox (1.18.4)
+@echo      (3) Instalar arquivos SU (Binario e SuperSU 1.34)
+@echo      (4) Verificacao de espaco livre em /system e em diretorio tmp  
+@echo          (Removera o Google Maps se necessario!)
+@echo  [*] Antes de voce comecar:   
+@echo      (1) Certifique-se de ter instalado os drivers adb para o seu dispositivo
+@echo      (2) Ative "DEPURACAO USB" 
+@echo            Em (Menu\Configuracoes\Aplicacoes\Desenvolvimento)
+@echo      (3) Ative "FONTES DESCONHECIDAS"
+@echo            Em (Menu\Configuracoes\Aplicacoes)
+@echo      (4) [OPCIONAL] Aumente o tempo limite da tela para 10 minutos
+@echo      (5) Conecte o cabo USB no telefone, e em seguida ao PC
+@echo      (6) Nao ative o armazenamento USB
+@echo ------------------------------------------------------------------------------
+@echo  CONFIRME TODAS AS SITUACOES ACIMA, ENTAO... 
+@pause
+@echo --- STARTING ----
+@echo --- WAITING FOR DEVICE
+@files\adb wait-for-device
+@echo --- creating temporary directory
+@files\adb shell "cd /data/local && mkdir tmp"
+@echo --- cleaning
+@files\adb shell "cd /data/local/tmp/ && rm *"
+@echo --- pushing zergRush
+@files\adb push files\zergRush /data/local/tmp/.
+@echo --- correcting permissions
+@files\adb shell "chmod 777 /data/local/tmp/zergRush"
+@echo --- executing zergRush
+@files\adb shell "./data/local/tmp/zergRush"
+@echo --- WAITING FOR DEVICE TO RECONNECT
+@echo if it gets stuck over here for a long time then try:
+@echo    disconnect usb cable and reconnect it
+@echo    toggle "USB DEBUGGING" (first disable it then enable it)
+@files\adb wait-for-device
+@echo --- DEVICE FOUND
+@echo --- pushing busybox
+@files\adb push files\busybox /data/local/tmp/.
+@echo --- correcting permissions
+@files\adb shell "chmod 755 /data/local/tmp/busybox"
+@echo --- remounting /system
+@files\adb shell "/data/local/tmp/busybox mount -o remount,rw /system"
+@echo --- checking free space on /system
+@files\adb push files\makespace /data/local/tmp/.
+@files\adb shell "chmod 777 /data/local/tmp/makespace"
+@files\adb shell "./data/local/tmp/makespace"
+@echo --- copying busybox to /system/xbin/
+@files\adb shell "dd if=/data/local/tmp/busybox of=/system/xbin/busybox"
+@echo --- correcting ownership
+@files\adb shell "chown root.shell /system/xbin/busybox"
+@echo --- correcting permissions
+@files\adb shell "chmod 04755 /system/xbin/busybox"
+@echo --- installing busybox
+@files\adb shell "/system/xbin/busybox --install -s /system/xbin"
+@files\adb shell "rm -r /data/local/tmp/busybox"
+@echo --- pushing SU binary
+@files\adb push files\su /system/bin/su
+@echo --- correcting ownership
+@files\adb shell "chown root.shell /system/bin/su"
+@echo --- correcting permissions
+@files\adb shell "chmod 06755 /system/bin/su"
+@echo --- correcting symlinks
+@files\adb shell "rm /system/xbin/su"
+@files\adb shell "ln -s /system/bin/su /system/xbin/su"
+@echo --- pushing Superuser app
+@files\adb push files\Superuser.apk /system/app/.
+@echo --- cleaning
+@files\adb shell "cd /data/local/tmp/; rm *"
+@echo --- rebooting
+@files\adb reboot
+@echo ALL DONE!!!
+@pause
+goto menu
+
+:unroot
+cls
+echo Versao BETA, erros sao esperados.
+echo Nao traduzido por pedido do desenvolvedor original.
+echo Lista dos dispositivos suportados pode ser encontrado em 
+echo C:/MakosStudio/Aparelhos.txt
+pause
+cls
+@echo ---------------------------------------------------------------------------
+@echo	              Easy rooting toolkit (v1.0)
+@echo	                  UNROOTING SCRIPT
+@echo                  created by DooMLoRD
+@echo   based heavily on FlashTool scripts (by Bin4ry and Androxyde)
+@echo    Credits go to all those involved in making this possible!
+@echo ----------------------------------------------------------------------------
+@echo  [*] Este script ira:
+@echo      (1) Desrootear o seu dispositivo usando um script especial
+@echo      (2) Remover Busybox e symlinks associados
+@echo      (3) Remover arquivos SU e data associadas
+@echo  [*] Antes de voce comecar:   
+@echo      (1) Certifique-se de ter instalado os drivers adb para o seu dispositivo
+@echo      (2) Ative "DEPURACAO USB" 
+@echo            Em (Menu\Configuracoes\Aplicacoes\Desenvolvimento)
+@echo      (3) Ative "FONTES DESCONHECIDAS"
+@echo            Em (Menu\Configuracoes\Aplicacoes)
+@echo      (4) [OPCIONAL] Aumente o tempo limite da tela para 10 minutos
+@echo      (5) Conecte o cabo USB no telefone, e em seguida ao PC
+@echo      (6) Nao ative o armazenamento USB
+@echo ------------------------------------------------------------------------------
+@echo  TENHA CERTEZA QUE A TELA ESTA DESBLOQUEADA 
+@echo  Se aparecer solicitacao de SuperUsuario, ACEITAR/PERMITIR OU
+@echo  ISTO NAO VAI FUNCIONAR
+@echo ------------------------------------------------------------------------------
+@echo  CONFIRME TODAS AS SITUACOES ACIMA, ENTAO...
+@echo ------------------------------------------------------------------------------
+@pause
+@echo --- STARTING ----
+@echo --- WAITING FOR DEVICE
+@files\adb wait-for-device
+@echo --- TESTING FOR SU PERMISSIONS
+@echo  MAKE SURE THAT THE SCREEN IS UNLOCKED 
+@echo  and if you get Superuser prompts ACCEPT/ALLOW THEM 
+@echo  ELSE THIS WILL NOT WORK
+@files\adb shell "su -c 'echo --- Superuser check successful'"
+@echo --- cleaning
+@files\adb shell "cd /data/local/tmp/; rm *"
+@echo --- pushing busybox
+@files\adb push files\busybox /data/local/tmp/.
+@echo --- correcting permissions
+@files\adb shell "chmod 755 /data/local/tmp/busybox"
+@echo --- remounting /system
+@echo  MAKE SURE THAT THE SCREEN IS UNLOCKED 
+@echo  and if you get Superuser prompts ACCEPT/ALLOW THEM 
+@echo  ELSE THIS WILL NOT WORK
+@files\adb shell "su -c '/data/local/tmp/busybox mount -o remount,rw /system'"
+@echo --- pushing unroot script
+@files\adb push files\unroot /data/local/tmp/.
+@echo --- correcting permissions
+@files\adb shell "chmod 777 /data/local/tmp/unroot"
+@echo --- executing unroot
+@echo  MAKE SURE THAT THE SCREEN IS UNLOCKED 
+@echo  and if you get Superuser prompts ACCEPT/ALLOW THEM 
+@echo  ELSE THIS WILL NOT WORK
+@files\adb shell "su -c '/data/local/tmp/unroot'"
+@echo --- cleaning
+@files\adb shell "cd /data/local/tmp/; rm *"
+@echo --- rebooting
+@files\adb reboot
+@echo ALL DONE!!!
+@pause
+goto menu
+
+:apktool
+cls
+echo Para saber mais, acesse:
+echo http://forum.xda-developers.com/showthread.php?t=1989533
+cd C:/DaniloStudios/tools/apktool
+start cmd
+pause
+goto menu
+
+:eulaopen
+cd C:\DaniloStudios
+start EULA.txt
+goto menu
+
+:about
+cls
+@echo ======================== Sobre The Ace All-In-One Tool ========================
+@echo	                     The Ace All-In-One Tool (v1.0 BETA)
+@echo                           Criado por Danilo Quintanilha
+@echo      Baseado em ZipsterTool e Easy Rooting Toolkit (PulseDroid e DooMLoRD)
+@echo  Todos os creditos para aqueles que estao envolvidos em tornar isso possivel!
+@echo ===============================================================================
+@echo  [*] Agradecimentos Especiais:
+@echo      * PulseDroid pelo programa ZipsterTool.
+@echo      * DooMLoRD pelo DooMLoRD's Easy Rooting Toolkit.
+@echo      * Beta-testers pelos testes no programa.
+@echo  [*] Notas:   
+@echo      * Voce e livre para editar o codigo, mas por favor, mantenha-o gratuito.
+@echo  [*] Changelog (Versao 1.0 BETA):
+@echo      * Corrigido erros de portugues no arquivo EULA.
+@echo      * Corrigido erros de portugues no programa.
+@echo      * Corrigida as permissoes para script(s) movido(s) para init.d 
+@echo      * Atualizado ADB para a ultima versao (1.0.31).
+@echo      * Adicionado fastboot para opcoes ADB avancadas.
+@echo      * Compativel com Windows 8 e 8.1
+@echo ===============================================================================
+@echo  Sobre a versao:
+@echo  Versao: 1.0 BETA build 2812
+@echo  Compilacao: 20131228 16:32:42
+@echo ===============================================================================
+@pause
+goto menu
+
+:adb
+cls
+cd C:\DaniloStudios/files
+echo.
+echo   Por favor, escolha a acao que voce deseja realizar.
+echo.
+echo   1. Reiniciar o dispositivo normalmente.
+echo   2. Reiniciar o dispositivo em recuperacao.
+echo   3. Reiniciar o dispositivo em bootloader.
+echo   4. Ver o serial do dispositivo.
+echo   5. Relatorio de bugs.
+echo   6. Mover scripts para /system/etc/init.d
+echo   7. Logcat.
+echo   8. Digtar meu proprio comando ADB.
+echo   9. Ajuda sobre ADB.
+echo   10. Sobre ADB.
+echo   x. Voltar ao Menu Principal.
+echo.
+set /p se=Selecione a acao: 
+if %se%==1 (goto reboot)
+if %se%==2 (goto recovery)
+if %se%==3 (goto bootloader)
+if %se%==4 (goto serial)
+if %se%==5 (goto bugreport)
+if %se%==6 (goto script)
+if %se%==7 (goto logcat)
+if %se%==8 (goto adbcmd)
+if %se%==9 (goto help)
+if %se%==10 (goto adbabout)
+if %se%==x (goto menu)
+
+:reboot
+cls
+adb reboot
+goto adb 
+
+:serial
+cls
+adb get-serialno
+pause
+goto adb
+
+:adbcmd
+cls
+echo Digite ADB e o comando que deseja realizar.
+start cmd
+pause 
+goto adb
+
+:recovery
+cls
+adb reboot recovery
+goto adb
+
+:bootloader
+cls
+adb reboot bootloader
+goto adb
+
+:adbabout
+cls
+adb version
+pause
+goto adb
+
+:help
+cls
+adb help
+pause
+goto adb
+
+:bugreport
+cls
+echo Logs antigos serao apagados, faca backup do log antigo.
+pause
+IF EXIST "C:\DaniloStudios/bugreportlog.txt" (del "C:\DaniloStudios/bugreportlog.txt") ELSE (echo log nao escontrado)
+cls
+echo Gerando o log.
+adb bugreport > "C:\DaniloStudios/bugreportlog.txt"
+echo.
+echo Log gerado com sucesso se nenhum erro acima.
+echo Voce pode encontra-lo em C:\DaniloStudios/bugreportlog.txt
+echo Deseja exibir o log agora?
+set /p se=(s/n): 
+if %se%==s (goto bugreportopen)
+if %se%==n (goto adb)
+
+:logcat
+cls
+echo Logs antigos serao apagados, faca backup do log antigo.
+pause
+IF EXIST "C:\DaniloStudios/logcatlog.txt" (del "C:\DaniloStudios/logcatlog.txt") ELSE (echo log nao escontrado)
+cls
+echo Gerando o log (Pode levar certo tempo!).
+adb logcat > "C:\DaniloStudios/logcatlog.txt"
+echo.
+echo Log gerado com sucesso se nenhum erro acima.
+echo Voce pode encontra-lo em C:\DaniloStudios/logcatlog.txt
+echo Deseja exibir o log agora?
+set /p se=(s/n): 
+if %se%==s (goto logcatopen)
+if %se%==n (goto adb)
+
+:script
+cls
+echo Em fase de testes!!! Faca por sua conta e risco.
+echo Copie o(s) script(s) para /files/scripts.
+pause
+adb push files\scripts\*.* /system/etc/init.d/
+adb shell "chmod 04755 /system/etc/init.d/*.*"
+adb reboot
+echo Processo terminado.
+pause
+goto adb 
+
+:bugreportopen
+start C:\DaniloStudios/bugreportlog.txt
+goto adb
+
+:logcatopen
+start C:\DaniloStudios/logcatlog.txt
+goto adb
+
+:exit
+cls
+exit
