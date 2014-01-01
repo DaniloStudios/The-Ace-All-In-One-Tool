@@ -10,9 +10,9 @@ rem * thermonuclear war, or you getting fired because the alarm app failed. Plea
 rem * do some research if you have any concerns about features included in this program
 rem * before use it! YOU are choosing to make these modifications, and if
 rem * you point the finger at me for messing up your device, I will laugh at you.
-rem * Copyright 2013, Mako's Studio
-rem * 2013, Mako's Studio, All Rights Reserved
-rem * Mako's Studio LLC and Mako's Studio are trademarks of Danilo Quintanilha
+rem * Copyright 2013,Danilo Studios
+rem * 2013, Danilo Studios, All Rights Reserved
+rem * Danilo Studios and Mako's Studio are trademarks of Danilo Quintanilha
 rem * Agradecimentos especiais: 
 rem *  -->PulseDroid [http://forum.xda-developers.com/member.php?u=4425071]
 rem *  -->DooMLoRD   [http://forum.xda-developers.com/member.php?u=2784807]
@@ -20,11 +20,14 @@ rem * Tópico de desenvolvimento:
 rem *  -->[http://forum.xda-developers.com/showthread.php?t=2209141]
 rem */
 
-title The Ace All-In-One Tool - Danilo Studios - v1.0 BETA
+title The Ace All-In-One Tool - Danilo Studios - v1.1 BETA
+
+cd C:/DaniloStudios
 
 IF EXIST "C:\DaniloStudios/COMPRESS/INPUT" (echo Diretorio existente) ELSE (mkdir "C:\DaniloStudios/COMPRESS/INPUT")
 IF EXIST "C:\DaniloStudios/EXTRACT/OUT" (echo Diretorio existente) ELSE (mkdir "C:\DaniloStudios/EXTRACT/OUT")
 IF EXIST "C:\DaniloStudios/EXTRACT/INPUT" (echo Diretorio existente) ELSE (mkdir "C:\DaniloStudios/EXTRACT/INPUT")
+IF EXIST "C:\DaniloStudios/files/zergRush" (echo Nenhuma acao necessaria) ELSE (IF EXIST "C:\DaniloStudios\Backup\zergRush.zip" (call C:\DaniloStudios\tools\7za.exe x "C:\DaniloStudios\Backup\*" -o"C:\DaniloStudios\files"))
 cls
 goto menu
 
@@ -33,16 +36,17 @@ cls
 echo.
 echo   Por favor, escolha a acao que voce deseja realizar.
 echo.
-echo   1. Descompactar/Extrair arquivo .zip.
-echo   2. Compactar/Zipar arquivos e pastas.
-echo   3. Assinar o seu arquivo .zip.
-echo   4. Rootear o celular.
-echo   5. Remover o Root do seu celular.
-echo   6. Opcoes ADB.
-echo   7. ApkTool.
-echo   8. Sobre.
-echo   9. Exibir a Licenca do usario.
-echo   x. Sair.
+echo   1.  Descompactar/Extrair arquivo .zip.
+echo   2.  Compactar/Zipar arquivos e pastas.
+echo   3.  Assinar o seu arquivo .zip.
+echo   4.  Rootear o celular.
+echo   5.  Remover o Root do seu celular.
+echo   6.  Opcoes ADB.
+echo   7.  ApkTool.
+echo   8.  Iniciar o Odin
+echo   9.  Sobre.
+echo   10. Exibir a Licenca do usario.
+echo   x.  Sair.
 echo.
 set /p se=Selecione a acao: 
 if %se%==1 (goto unzip)
@@ -52,8 +56,9 @@ if %se%==4 (goto root)
 if %se%==5 (goto unroot)
 if %se%==6 (goto adb)
 if %se%==7 (goto apktool)
-if %se%==8 (goto about)
-if %se%==9 (goto eulaopen)
+if %se%==8 (goto odin)
+if %se%==9 (goto about)
+if %se%==10 (goto eulaopen)
 if %se%==x (goto exit)
 
 :unzip
@@ -119,8 +124,12 @@ echo Versao BETA, erros sao esperados.
 echo Não traduzido por pedido do desenvolvedor original.
 echo Lista dos dispositivos suportados pode ser encontrado em 
 echo C:/DaniloStudios/Aparelhos.txt
+echo Desative todos os anti-vírus antes de prosseguir.
 pause
+IF EXIST "C:\DaniloStudios/files/zergRush" (echo Nenhuma acao necessaria) ELSE (Erro.txt
+exit)
 cls
+cd C:\DaniloStudios/files
 @echo ----------------------------------------------------------------------------
 @echo	              Easy rooting toolkit (v4.0)
 @echo                    created by DooMLoRD
@@ -130,7 +139,7 @@ cls
 @echo  [*] Este script ira:
 @echo      (1) Rootear o seu celular usando zergRush exploit (21 Nov)
 @echo      (2) Instalar Busybox (1.18.4)
-@echo      (3) Instalar arquivos SU (Binario e SuperSU 1.34)
+@echo      (3) Instalar arquivos SU (Binario e SuperUser)
 @echo      (4) Verificacao de espaco livre em /system e em diretorio tmp  
 @echo          (Removera o Google Maps se necessario!)
 @echo  [*] Antes de voce comecar:   
@@ -147,57 +156,57 @@ cls
 @pause
 @echo --- STARTING ----
 @echo --- WAITING FOR DEVICE
-@files\adb wait-for-device
+adb wait-for-device
 @echo --- creating temporary directory
-@files\adb shell "cd /data/local && mkdir tmp"
+adb shell "cd /data/local && mkdir tmp"
 @echo --- cleaning
-@files\adb shell "cd /data/local/tmp/ && rm *"
+adb shell "cd /data/local/tmp/ && rm *"
 @echo --- pushing zergRush
-@files\adb push files\zergRush /data/local/tmp/.
+adb push files\zergRush /data/local/tmp/.
 @echo --- correcting permissions
-@files\adb shell "chmod 777 /data/local/tmp/zergRush"
+adb shell "chmod 777 /data/local/tmp/zergRush"
 @echo --- executing zergRush
-@files\adb shell "./data/local/tmp/zergRush"
+adb shell "./data/local/tmp/zergRush"
 @echo --- WAITING FOR DEVICE TO RECONNECT
 @echo if it gets stuck over here for a long time then try:
 @echo    disconnect usb cable and reconnect it
 @echo    toggle "USB DEBUGGING" (first disable it then enable it)
-@files\adb wait-for-device
+adb wait-for-device
 @echo --- DEVICE FOUND
 @echo --- pushing busybox
-@files\adb push files\busybox /data/local/tmp/.
+adb push files\busybox /data/local/tmp/.
 @echo --- correcting permissions
-@files\adb shell "chmod 755 /data/local/tmp/busybox"
+adb shell "chmod 755 /data/local/tmp/busybox"
 @echo --- remounting /system
-@files\adb shell "/data/local/tmp/busybox mount -o remount,rw /system"
+adb shell "/data/local/tmp/busybox mount -o remount,rw /system"
 @echo --- checking free space on /system
-@files\adb push files\makespace /data/local/tmp/.
-@files\adb shell "chmod 777 /data/local/tmp/makespace"
-@files\adb shell "./data/local/tmp/makespace"
+adb push files\makespace /data/local/tmp/.
+adb shell "chmod 777 /data/local/tmp/makespace"
+adb shell "./data/local/tmp/makespace"
 @echo --- copying busybox to /system/xbin/
-@files\adb shell "dd if=/data/local/tmp/busybox of=/system/xbin/busybox"
+adb shell "dd if=/data/local/tmp/busybox of=/system/xbin/busybox"
 @echo --- correcting ownership
-@files\adb shell "chown root.shell /system/xbin/busybox"
+adb shell "chown root.shell /system/xbin/busybox"
 @echo --- correcting permissions
-@files\adb shell "chmod 04755 /system/xbin/busybox"
+adb shell "chmod 04755 /system/xbin/busybox"
 @echo --- installing busybox
-@files\adb shell "/system/xbin/busybox --install -s /system/xbin"
-@files\adb shell "rm -r /data/local/tmp/busybox"
+adb shell "/system/xbin/busybox --install -s /system/xbin"
+adb shell "rm -r /data/local/tmp/busybox"
 @echo --- pushing SU binary
-@files\adb push files\su /system/bin/su
+adb push files\su /system/bin/su
 @echo --- correcting ownership
-@files\adb shell "chown root.shell /system/bin/su"
+adb shell "chown root.shell /system/bin/su"
 @echo --- correcting permissions
-@files\adb shell "chmod 06755 /system/bin/su"
+adb shell "chmod 06755 /system/bin/su"
 @echo --- correcting symlinks
-@files\adb shell "rm /system/xbin/su"
-@files\adb shell "ln -s /system/bin/su /system/xbin/su"
+adb shell "rm /system/xbin/su"
+adb shell "ln -s /system/bin/su /system/xbin/su"
 @echo --- pushing Superuser app
-@files\adb push files\Superuser.apk /system/app/.
+adb push files\Superuser.apk /system/app/.
 @echo --- cleaning
-@files\adb shell "cd /data/local/tmp/; rm *"
+adb shell "cd /data/local/tmp/; rm *"
 @echo --- rebooting
-@files\adb reboot
+adb reboot
 @echo ALL DONE!!!
 @pause
 goto menu
@@ -210,6 +219,7 @@ echo Lista dos dispositivos suportados pode ser encontrado em
 echo C:/MakosStudio/Aparelhos.txt
 pause
 cls
+cd C:\DaniloStudios/files
 @echo ---------------------------------------------------------------------------
 @echo	              Easy rooting toolkit (v1.0)
 @echo	                  UNROOTING SCRIPT
@@ -240,36 +250,36 @@ cls
 @pause
 @echo --- STARTING ----
 @echo --- WAITING FOR DEVICE
-@files\adb wait-for-device
+adb wait-for-device
 @echo --- TESTING FOR SU PERMISSIONS
 @echo  MAKE SURE THAT THE SCREEN IS UNLOCKED 
 @echo  and if you get Superuser prompts ACCEPT/ALLOW THEM 
 @echo  ELSE THIS WILL NOT WORK
-@files\adb shell "su -c 'echo --- Superuser check successful'"
+adb shell "su -c 'echo --- Superuser check successful'"
 @echo --- cleaning
-@files\adb shell "cd /data/local/tmp/; rm *"
+adb shell "cd /data/local/tmp/; rm *"
 @echo --- pushing busybox
-@files\adb push files\busybox /data/local/tmp/.
+adb push files\busybox /data/local/tmp/.
 @echo --- correcting permissions
-@files\adb shell "chmod 755 /data/local/tmp/busybox"
+adb shell "chmod 755 /data/local/tmp/busybox"
 @echo --- remounting /system
 @echo  MAKE SURE THAT THE SCREEN IS UNLOCKED 
 @echo  and if you get Superuser prompts ACCEPT/ALLOW THEM 
 @echo  ELSE THIS WILL NOT WORK
-@files\adb shell "su -c '/data/local/tmp/busybox mount -o remount,rw /system'"
+adb shell "su -c '/data/local/tmp/busybox mount -o remount,rw /system'"
 @echo --- pushing unroot script
-@files\adb push files\unroot /data/local/tmp/.
+adb push files\unroot /data/local/tmp/.
 @echo --- correcting permissions
-@files\adb shell "chmod 777 /data/local/tmp/unroot"
+adb shell "chmod 777 /data/local/tmp/unroot"
 @echo --- executing unroot
 @echo  MAKE SURE THAT THE SCREEN IS UNLOCKED 
 @echo  and if you get Superuser prompts ACCEPT/ALLOW THEM 
 @echo  ELSE THIS WILL NOT WORK
-@files\adb shell "su -c '/data/local/tmp/unroot'"
+adb shell "su -c '/data/local/tmp/unroot'"
 @echo --- cleaning
-@files\adb shell "cd /data/local/tmp/; rm *"
+adb shell "cd /data/local/tmp/; rm *"
 @echo --- rebooting
-@files\adb reboot
+adb reboot
 @echo ALL DONE!!!
 @pause
 goto menu
@@ -291,7 +301,7 @@ goto menu
 :about
 cls
 @echo ======================== Sobre The Ace All-In-One Tool ========================
-@echo	                     The Ace All-In-One Tool (v1.0 BETA)
+@echo	                     The Ace All-In-One Tool (v1.1 BETA)
 @echo                           Criado por Danilo Quintanilha
 @echo      Baseado em ZipsterTool e Easy Rooting Toolkit (PulseDroid e DooMLoRD)
 @echo  Todos os creditos para aqueles que estao envolvidos em tornar isso possivel!
@@ -302,19 +312,37 @@ cls
 @echo      * Beta-testers pelos testes no programa.
 @echo  [*] Notas:   
 @echo      * Voce e livre para editar o codigo, mas por favor, mantenha-o gratuito.
-@echo  [*] Changelog (Versao 1.0 BETA):
+@echo  [*] Changelog (Versao 1.1 BETA):
 @echo      * Corrigido erros de portugues no arquivo EULA.
-@echo      * Corrigido erros de portugues no programa.
+@echo      * Adicionado Odin
 @echo      * Corrigida as permissoes para script(s) movido(s) para init.d 
-@echo      * Atualizado ADB para a ultima versao (1.0.31).
+@echo      * Atualizado ADB para a ultima versao.
 @echo      * Adicionado fastboot para opcoes ADB avancadas.
 @echo      * Compativel com Windows 8 e 8.1
 @echo ===============================================================================
 @echo  Sobre a versao:
-@echo  Versao: 1.0 BETA build 2812
-@echo  Compilacao: 20131228 16:32:42
+@echo  Versao: 1.1 BETA build 3012
+@echo  Compilacao: 20131228 15:12:42
 @echo ===============================================================================
 @pause
+goto menu
+
+:odin
+cls
+cd C:\DaniloStudios/odin
+echo Iniciando o Odin
+echo O firmware para o galaxy ace pode ser encontrado no seguinte link:
+echo http://www.sammobile.com/firmwares/
+echo.
+echo O arquivo .ops está no diretorio: C:/DaniloStudios/odin/ops
+echo.
+echo Um tutorial rapido de como se usar o odin se encontra no diretorio 
+echo C:/DaniloStudios/odin
+echo.
+pause
+start odincooper.exe
+cls
+pause
 goto menu
 
 :adb
@@ -323,17 +351,17 @@ cd C:\DaniloStudios/files
 echo.
 echo   Por favor, escolha a acao que voce deseja realizar.
 echo.
-echo   1. Reiniciar o dispositivo normalmente.
-echo   2. Reiniciar o dispositivo em recuperacao.
-echo   3. Reiniciar o dispositivo em bootloader.
-echo   4. Ver o serial do dispositivo.
-echo   5. Relatorio de bugs.
-echo   6. Mover scripts para /system/etc/init.d
-echo   7. Logcat.
-echo   8. Digtar meu proprio comando ADB.
-echo   9. Ajuda sobre ADB.
+echo   1.  Reiniciar o dispositivo normalmente.
+echo   2.  Reiniciar o dispositivo em recuperacao.
+echo   3.  Reiniciar o dispositivo em bootloader.
+echo   4.  Ver o serial do dispositivo.
+echo   5.  Relatorio de bugs.
+echo   6.  Mover scripts para /system/etc/init.d
+echo   7.  Logcat.
+echo   8.  Digtar meu proprio comando ADB.
+echo   9.  Ajuda sobre ADB.
 echo   10. Sobre ADB.
-echo   x. Voltar ao Menu Principal.
+echo   x.  Voltar ao Menu Principal.
 echo.
 set /p se=Selecione a acao: 
 if %se%==1 (goto reboot)
@@ -426,7 +454,7 @@ echo Em fase de testes!!! Faca por sua conta e risco.
 echo Copie o(s) script(s) para /files/scripts.
 pause
 adb push files\scripts\*.* /system/etc/init.d/
-adb shell "chmod 04755 /system/etc/init.d/*.*"
+adb shell "chmod 0644 /system/etc/init.d/*.*"
 adb reboot
 echo Processo terminado.
 pause
